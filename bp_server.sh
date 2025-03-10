@@ -1,6 +1,6 @@
 #!/bin/bash
-
-source bp_properties.sh
+PARENT_DIR=/home/test2/backup_class
+source ${PARENT_DIR}/bp_properties.sh
 
 fetch_lock(){
 	while [ -e ${LOCK_DIR}/$(basename $1).lock ];
@@ -66,10 +66,10 @@ fi
 
 case $1 in
 	start_bp)
-		start_backend_helper start_bp $BACKUP_SLEEP_TIME
+		start_backend_helper ${PARENT_DIR}/start_bp $BACKUP_SLEEP_TIME
 		;;
 	stop_bp)
-		stop_backend_helper start_bp
+		stop_backend_helper ${PARENT_DIR}/start_bp
 		;;
 	*)
 		$LOG_SCRIPT "Invalid option From Primary Server! $1"

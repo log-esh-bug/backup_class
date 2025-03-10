@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source bp_properties.sh
+PARENT_DIR=/home/test2/backup_class
+source ${PARENT_DIR}/bp_properties.sh
 
 backup_schedular_helper(){
     ssh ${PARTNER_USER_NAME}@${PARTNER_HOST_NAME} "${PARTNER_DOBACKUP_SCRIPT_PATH}"
