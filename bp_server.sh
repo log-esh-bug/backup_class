@@ -65,11 +65,11 @@ if [ $# -eq 0 ];then
 fi
 
 case $1 in
-	st_b_sch)
-		start_backend_helper bp_schedular $BACKUP_SLEEP_TIME
+	start_bp)
+		start_backend_helper start_bp $BACKUP_SLEEP_TIME
 		;;
-	sp_b_sch)
-		stop_backend_helper bp_schedular
+	stop_bp)
+		stop_backend_helper start_bp
 		;;
 	*)
 		$LOG_SCRIPT "Invalid option From Primary Server! $1"
