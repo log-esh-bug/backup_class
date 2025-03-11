@@ -3,12 +3,12 @@
 PARENT_DIR=/home/test2/backup_class
 source ${PARENT_DIR}/bp_properties.sh
 
-backup_schedular_helper(){
+start_bp_helper(){
     ssh ${PARTNER_USER_NAME}@${PARTNER_HOST_NAME} "${PARTNER_DOBACKUP_SCRIPT_PATH}"
     $LOG_SCRIPT "Took backup!"
 }
 
-schedule_backup(){
+MAIN(){
     while ((1))
     do
         backups_found=$(ls ${BACKUP_DIR}| wc -l)
@@ -17,7 +17,7 @@ schedule_backup(){
             oldest_backup=$(ls -t $BACKUP_DIR | tail -1)
             rm ${BACKUP_DIR}/${oldest_backup}
         fi
-        backup_schedular_helper
+        start_bp_helper
 
         # echo "sleeping"
         sleep $BACKUP_SLEEP_TIME
@@ -38,4 +38,4 @@ if [ -n "$1" ]; then
     BACKUP_SLEEP_TIME=$1
 fi
 
-schedule_backup
+MAIN

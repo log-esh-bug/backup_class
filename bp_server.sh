@@ -2,20 +2,6 @@
 PARENT_DIR=/home/test2/backup_class
 source ${PARENT_DIR}/bp_properties.sh
 
-fetch_lock(){
-	while [ -e ${LOCK_DIR}/$(basename $1).lock ];
-	do
-		sleep 1		
-	done
-	touch ${LOCK_DIR}/$(basename $1).lock 
-}
-
-drop_lock(){
-	if [ -e ${LOCK_DIR}/$(basename $1).lock  ];then
-		rm ${LOCK_DIR}/$(basename $1).lock 
-	fi
-}
-
 start_backend_helper(){
 	fetch_lock ${1}.pid
 
@@ -23,12 +9,12 @@ start_backend_helper(){
 	if [ -e ${pid_file} ];then
 		local pid=$(cat ${pid_file})
 	    if [[ $(ps -p $pid --format comm=) == "${1}.sh" ]];then
-			echo "${1} already started!"
+			$LOG_SCRIPT "${1} already started!"
 			drop_lock ${1}.pid
 			return
 		fi
 	fi
-	echo "${1} Started and will happen for every $2!"
+	$LOG_SCRIPT "${1} Started and will happen for every $2!"
 	${PARENT_DIR}/${1}.sh ${2}&
 	echo "$!" > ${pid_file}
 	drop_lock ${1}.pid
@@ -44,16 +30,16 @@ stop_backend_helper(){
 		if [[ $(ps -p $pid --format comm=) == "${1}.sh" ]];then
 			kill -9 $pid
 			rm ${pid_file}
-			echo "${1} Stopped!"
+			$LOG_SCRIPT "${1} Stopped!"
 			drop_lock ${1}.pid
 			return
 		else
 			rm ${pid_file}
-			echo "${1}.pid file contains corrupted pid!"
+			$LOG_SCRIPT "${1}.pid file contains corrupted pid!"
 		fi
 	fi
 	drop_lock ${1}.pid
-	echo "${1} not started already. First start one!"
+	$LOG_SCRIPT "${1} not started already. First start one!"
 }
 
 if [ ! -d $LOCK_DIR ];then
