@@ -1,5 +1,5 @@
 #!/bin/bash
-PARENT_DIR=/home/test2/backup_class
+PARENT_DIR=/home/sas/backup_class
 BACKUP_DIR=${PARENT_DIR}/repo
 LOCK_DIR=${PARENT_DIR}/locks
 
