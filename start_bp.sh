@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sleep_time=60
-LOG_FILE=/home/sas/pg_repo/script_log
+LOG_FILE=/home/sas/backup_class/log
 
 log(){
     echo "$(date +%F' '%T' '%Z) [$(ps -p $PPID --format comm=) $PPID] LOG: $1" >> $LOG_FILE
