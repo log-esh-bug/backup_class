@@ -1,41 +1,28 @@
 #!/bin/bash
 
-PARENT_DIR=/home/test2/backup_class
-source ${PARENT_DIR}/bp_properties.sh
+sleep_time=60
+LOG_FILE=/home/sas/pg_repo/script_log
 
-start_bp_helper(){
-    ssh ${PARTNER_USER_NAME}@${PARTNER_HOST_NAME} "${PARTNER_DOBACKUP_SCRIPT_PATH}"
-    $LOG_SCRIPT "Took backup!"
+log(){
+    echo "$(date +%F' '%T' '%Z) [$(ps -p $PPID --format comm=) $PPID] LOG: $1" >> $LOG_FILE
 }
 
-MAIN(){
-    while ((1))
-    do
-        backups_found=$(ls ${BACKUP_DIR}| wc -l)
-        if(($backups_found >= $BACKUP_THRESHOLD));then
+if [ -n "$1" ];then
+    sleep_time=$1
+    log "Backup sleep time set to $sleep_time"
+fi
 
-            oldest_backup=$(ls -t $BACKUP_DIR | tail -1)
-            rm ${BACKUP_DIR}/${oldest_backup}
+dobackup_helper(){
+        pgbackrest --stanza=class backup
+        if [ $? -ne 0 ]; then
+                log "Backup failed.Safely Exiting..."
+                exit 1
         fi
-        start_bp_helper
-
-        # echo "sleeping"
-        sleep $BACKUP_SLEEP_TIME
-    done
+        log "Backup taken!!!"
 }
 
-if [ ! -d "$BACKUP_DIR" ]; then
-    if mkdir -p "$BACKUP_DIR"; then
-        $LOG_SCRIPT "Backup directory created successfully at ${BACKUP_DIR}!"
-    else
-        $LOG_SCRIPT "Unable to create backup folder at ${BACKUP_DIR}!Exiting...."
-        exit
-    fi
-fi
-
-if [ -n "$1" ]; then
-    $LOG_SCRIPT "$(basename $0) says Backup sleep time is set to $1"
-    BACKUP_SLEEP_TIME=$1
-fi
-
-MAIN
+while true
+do
+    dobackup_helper
+    sleep ${sleep_time}
+done
